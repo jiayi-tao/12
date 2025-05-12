@@ -6,7 +6,7 @@ import time
 import numpy as np
 import util
 from config_reader import config_reader
-from scipy.ndimage.filters import gaussian_filter
+from scipy.ndimage import gaussian_filter
 from model import get_testing_model
 # find connection in the specified sequence, center 29 is in the position 15
 limbSeq = [[2, 3], [2, 6], [3, 4], [4, 5], [6, 7], [7, 8], [2, 9], [9, 10], \
@@ -277,3 +277,23 @@ def Pose(Img_path):
     org = cv2.resize(org,(256,256),interpolation=cv2.INTER_CUBIC)
     return canvas,people_count
 
+"""
+鼻子 (0)
+颈部 (1)
+右肩 (2)
+右肘 (3)
+右腕 (4)
+左肩 (5)
+左肘 (6)
+左腕 (7)
+右髋 (8)
+右膝 (9)
+右踝 (10)
+左髋 (11)
+左膝 (12)
+左踝 (13)
+右眼 (14)
+左眼 (15)
+右耳 (16)
+左耳 (17)
+"""

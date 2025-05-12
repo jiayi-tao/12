@@ -117,3 +117,14 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+
+
+"""
+比如输入一个图，终端输出：
+    高低肩：yes
+    O形腿：no
+    高低髋：yes
+    
+
+
+"""

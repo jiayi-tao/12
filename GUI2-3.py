@@ -22,6 +22,10 @@ import multiprocessing
 import warnings
 from ProcessImage import Processer
 from Classifier import Taichi_classifier
+from cal_model import compute_angle,distance,compute_knee_angle,compute_full_angle,compute_vertical_angle
+
+
+
 
 class Ui_MainWindow(QWidget):
     ##设置信号通道
@@ -30,7 +34,7 @@ class Ui_MainWindow(QWidget):
     sinOut3 =  pyqtSignal(int)
     sinOut4 = pyqtSignal(str) ## 终端输出
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("多人太极拳姿态识别系统")
+        MainWindow.setObjectName("姿态诊断系统")
         MainWindow.resize(1582, 903)
         MainWindow.setFixedSize(1582, 903)
         self.sinOut.connect(self.GetProcessTime)
@@ -145,31 +149,31 @@ class Ui_MainWindow(QWidget):
         self.line_5.setFrameShape(QtWidgets.QFrame.VLine)
         self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_5.setObjectName("line_5")
-        self.groupBox_5 = QtWidgets.QGroupBox(self.groupBox)
-        self.groupBox_5.setGeometry(QtCore.QRect(1190, 110, 331, 131))
-        self.groupBox_5.setTitle("")
-        self.groupBox_5.setObjectName("groupBox_5")
-        self.label_17 = QtWidgets.QLabel(self.groupBox_5)
-        self.label_17.setGeometry(QtCore.QRect(10, 30, 171, 61))
-        font = QtGui.QFont()
-        font.setFamily("华文楷体")
-        font.setPointSize(20)
-        font.setBold(True)
-        font.setItalic(False)
-        font.setWeight(75)
-        self.label_17.setFont(font)
-        self.label_17.setStyleSheet("color:white;\n"
-"font: 20pt \"华文楷体\";\n"
-"font-weight:bold;")
-        self.label_17.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_17.setObjectName("label_17")
-        self.lcdNumber_2 = QtWidgets.QLCDNumber(self.groupBox_5)
-        self.lcdNumber_2.setGeometry(QtCore.QRect(190, 20, 81, 71))
-        self.lcdNumber_2.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.lcdNumber_2.setStyleSheet("color:rgb(0, 255, 0);\n"
-"background:white;")
-        self.lcdNumber_2.setProperty("intValue", 0)
-        self.lcdNumber_2.setObjectName("lcdNumber_2")
+        # self.groupBox_5 = QtWidgets.QGroupBox(self.groupBox)
+        # self.groupBox_5.setGeometry(QtCore.QRect(1190, 110, 331, 131))
+        # self.groupBox_5.setTitle("")
+        # self.groupBox_5.setObjectName("groupBox_5")
+        # self.label_17 = QtWidgets.QLabel(self.groupBox_5)
+        # self.label_17.setGeometry(QtCore.QRect(10, 30, 171, 61))
+        # font = QtGui.QFont()
+        # font.setFamily("华文楷体")
+        # font.setPointSize(20)
+        # font.setBold(True)
+        # font.setItalic(False)
+        # font.setWeight(75)
+        # self.label_17.setFont(font)
+        # self.label_17.setStyleSheet("color:white;\n"
+        # "font: 20pt \"华文楷体\";\n"
+        # "font-weight:bold;")
+        # self.label_17.setAlignment(QtCore.Qt.AlignCenter)
+        # self.label_17.setObjectName("label_17")
+        # self.lcdNumber_2 = QtWidgets.QLCDNumber(self.groupBox_5)
+        # self.lcdNumber_2.setGeometry(QtCore.QRect(190, 20, 81, 71))
+        # self.lcdNumber_2.setLayoutDirection(QtCore.Qt.LeftToRight)
+        # self.lcdNumber_2.setStyleSheet("color:rgb(0, 255, 0);\n"
+        # "background:white;")
+        # self.lcdNumber_2.setProperty("intValue", 0)
+        # self.lcdNumber_2.setObjectName("lcdNumber_2")
         self.label_10 = QtWidgets.QLabel(self.groupBox)
         self.label_10.setGeometry(QtCore.QRect(370, 30, 471, 61))
         font = QtGui.QFont()
@@ -211,7 +215,7 @@ class Ui_MainWindow(QWidget):
         self.label_18.setAlignment(QtCore.Qt.AlignCenter)
         self.label_18.setObjectName("label_18")
         self.groupBox_6 = QtWidgets.QGroupBox(self.groupBox)
-        self.groupBox_6.setGeometry(QtCore.QRect(1190, 370, 331, 431))
+        self.groupBox_6.setGeometry(QtCore.QRect(1190, 110, 331, 691))
         self.groupBox_6.setTitle("")
         self.groupBox_6.setObjectName("groupBox_6")
         self.label_19 = QtWidgets.QLabel(self.groupBox_6)
@@ -229,10 +233,11 @@ class Ui_MainWindow(QWidget):
         self.label_19.setAlignment(QtCore.Qt.AlignCenter)
         self.label_19.setObjectName("label_19")
         self.listWidget = QtWidgets.QListWidget(self.groupBox_6)
-        self.listWidget.setGeometry(QtCore.QRect(40, 100, 256, 311))
+        self.listWidget.setGeometry(QtCore.QRect(20, 80, 290, 590))
         self.listWidget.setStyleSheet("background-color: rgb(255, 255, 255);\n"
 "color: rgb(13, 177, 27);\n"
 "font-size:17px;")
+        self.listWidget.setWordWrap(True)
         self.listWidget.setObjectName("listWidget")
         self.line = QtWidgets.QFrame(self.groupBox)
         self.line.setGeometry(QtCore.QRect(70, 440, 1031, 20))
@@ -244,11 +249,11 @@ class Ui_MainWindow(QWidget):
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
-        self.line_6 = QtWidgets.QFrame(self.groupBox)
-        self.line_6.setGeometry(QtCore.QRect(1200, 300, 321, 20))
-        self.line_6.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_6.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_6.setObjectName("line_6")
+        # self.line_6 = QtWidgets.QFrame(self.groupBox)
+        # self.line_6.setGeometry(QtCore.QRect(1200, 300, 321, 20))
+        # self.line_6.setFrameShape(QtWidgets.QFrame.HLine)
+        # self.line_6.setFrameShadow(QtWidgets.QFrame.Sunken)
+        # self.line_6.setObjectName("line_6")
         self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -262,7 +267,6 @@ class Ui_MainWindow(QWidget):
         self.retranslateUi(MainWindow)
         ##初始化上传文件路径以及加载model
         self.uploadimg=""
-        self.retranslateUi(MainWindow)
         ##图片处理器
         self.processor = Processer()
         ##分类器
@@ -274,16 +278,15 @@ class Ui_MainWindow(QWidget):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "多人太极拳姿态识别系统"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "医学姿态识别系统"))
         self.pushButton_3.setText(_translate("MainWindow", "上传文件"))
         self.pushButton_4.setText(_translate("MainWindow", "姿态识别"))
         self.label_3.setText(_translate("MainWindow", "Input Image"))
         self.label_11.setText(_translate("MainWindow", "OutPut Image"))
         self.label_12.setText(_translate("MainWindow", "Pose Image"))
-        self.label_17.setText(_translate("MainWindow", "人数统计："))
-        self.label_10.setText(_translate("MainWindow", "多人太极拳姿态识别系统"))
+        self.label_10.setText(_translate("MainWindow", "医学姿态识别系统"))
         self.label_18.setText(_translate("MainWindow", "终端输出"))
-        self.label_19.setText(_translate("MainWindow", "姿态预测结果"))
+        self.label_19.setText(_translate("MainWindow", "诊断结果"))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
         self.listWidget.setSortingEnabled(__sortingEnabled)
@@ -321,23 +324,22 @@ class Ui_MainWindow(QWidget):
             self.infoBox.button(QMessageBox.Ok).hide()
             self.infoBox.exec_()
     def Display_PersonCount(self,pc):
-        self.lcdNumber_2.display(pc)
+        # 注释掉这行或删除它
+        # self.lcdNumber_2.display(pc)
+        pass  # 添加pass以避免空函数
     def Terminal_Out(self):
         self.textEdit.setText(self.log)
         self.log = "Personal Vectors\n"##每次执行完还需要初始化终端信息
     def Loadresult(self):
         self.listWidget.clear()
         _translate = QtCore.QCoreApplication.translate
-        cnt = 0
         for v in self.pose_dic.keys():
-            res="Person-"
-            res+=str(v+1)+": "
-            res+=self.pose_dic[v]
+            # 直接使用诊断结果，去除Person-前缀
+            res = self.pose_dic[v]
             item = QtWidgets.QListWidgetItem()
             item.setText(_translate("MainWindow", res))
             self.listWidget.addItem(item)
-            cnt += 1
-        self.pose_dic={} #clear
+        self.pose_dic = {} #clear
     def excute(self):##开线程，线程函数为work
         if self.uploadimg=='':
             self.ImageEmptyError()
@@ -361,21 +363,248 @@ class Ui_MainWindow(QWidget):
         pc = self.processor.people_count
         self.log+="Image path: " + self.uploadimg + "\n"
 
-        ## 确定每个人的姿态映射
-        for n in range(len(self.processor.subset)):
-            Vec_n = []
-            self.log+="Person-"+str(n+1)+": \n"
-            for i in range(17):
-                index = self.processor.subset[n][np.array(self.processor.limbSeq[i]) - 1]  ##第n个人的第i个关键点的index
-                if -1 in index:
-                    continue
-                Y = self.processor.candidate[index.astype(int), 0]
-                X = self.processor.candidate[index.astype(int), 1]
-                # Y[0], X[0], Y[1], X[1]
-                self.log+="["+str(i)+": ("+str(Y[0]-Y[1])+","+str(X[0]-X[1])+")]"
-                Vec_n.append([i,Y[0]-Y[1],X[0]-X[1]])
-            self.pose_dic[n] = self.csf.classify_work(Vec_n)
-            self.log+="\n"
+        ## 收集关键点
+        keypoints = {}
+        for n in range(len(self.processor.subset)):  # 对每个人
+            for i in range(18):  # 检查18个可能的关键点
+                # 查找第n个人的第i个关键点
+                # 从limbSeq数组中获取关联的点对信息
+                for limb_idx in range(len(self.processor.limbSeq)):
+                    if self.processor.limbSeq[limb_idx][0] - 1 == i or self.processor.limbSeq[limb_idx][1] - 1 == i:
+                        index = self.processor.subset[n][i]
+                        if index != -1:  # 如果这个点存在
+                            # 从candidate中获取坐标
+                            point_idx = int(index)
+                            if 0 <= point_idx < len(self.processor.candidate):
+                                x, y = self.processor.candidate[point_idx][0:2]
+                                keypoints[i] = [x, y]
+                        break
+        
+        ## 进行太极拳姿态识别
+        # self.pose_dic[0] = self.csf.classify_work(keypoints)
+        
+        print(f"当前所有的点： {keypoints}")
+        
+        # 绘制关键点和标注序号
+        self.draw_keypoints(self.uploadimg, keypoints)
+        
+        # 清空之前的诊断结果
+        self.pose_dic = {}
+        
+        # 检测视角类型
+        view_perspective = self.detect_view_perspective(keypoints)
+        print(f"检测到的视角类型: {view_perspective}")
+        
+        # 添加视角类型到诊断结果
+        if view_perspective == 'side':
+            self.pose_dic[0] = "侧面视角"
+        else:
+            self.pose_dic[0] = "正面视角"
+        
+        result_index = 1  # 从索引1开始添加诊断结果
+
+        # 根据视角类型决定进行哪些检测
+        if view_perspective == 'side':
+            print("检测到侧面视角，只进行头颈前倾和膝超伸检测")
+            
+            # 头颈前倾检测
+            if all(k in keypoints for k in [0, 1]):
+                neck_forward_angle = compute_vertical_angle(keypoints[0], keypoints[1])
+                
+                print(f"头颈前倾角度值：{neck_forward_angle:.1f}°")
+                neck_result = f"头颈前倾角度值：{neck_forward_angle:.1f}°"
+                
+                if neck_forward_angle <= 40:
+                    neck_assessment = "评估: 无头颈前倾"
+                    neck_advice = ""
+                elif 40 < neck_forward_angle <= 50:
+                    neck_assessment = "评估: 轻微头颈前倾"
+                    neck_advice = "建议: 在日常生活中，要时刻提醒自己保持正确的姿势。如果工作需要长时间伏案，应调整桌椅高度，避免长时间低头书写或阅读。时常做一些颈部伸展运动。进行一些简单的颈部伸展运动，拉伸颈部两侧的肌肉。加强肩部和背部肌肉的锻炼，有助于改善头颈前倾。"
+                elif 50 < neck_forward_angle <= 60:
+                    neck_assessment = "评估: 严重头颈前倾"
+                    neck_advice = "建议: 在日常生活中要更加严格地注意姿势管理。避免长时间保持同一姿势，尤其是避免长时间低头或抬头过高。可以在专业康复治疗师的指导下进行康复训练。"
+                else:
+                    neck_assessment = "评估: 头颈前倾非常严重"
+                    neck_advice = "建议: 在日常生活中，要时刻保持高度的姿势保护意识。需要及时进行详细的医学评估，以便制定更合适的治疗方案、进行全面系统的康复训练。在医生的建议下，可能需要长期使用辅助器具来保持头部的正确位置。"
+                
+                print(neck_assessment)
+                print(neck_advice)
+                
+                # 将结果添加到诊断结果中
+                self.pose_dic[result_index] = f"{neck_result} - {neck_assessment}"
+                result_index += 1
+                if neck_advice:
+                    self.pose_dic[result_index] = neck_advice
+                    result_index += 1
+
+            # 膝超伸检测
+            knee_hyperext_detected = False
+
+            if all(k in keypoints for k in [8, 9, 10]):
+                knee_ext_angle = compute_knee_angle(keypoints[8], keypoints[9], keypoints[10])
+                knee_hyperext_detected = True
+            elif all(k in keypoints for k in [11, 12, 13]):
+                knee_ext_angle = compute_knee_angle(keypoints[11], keypoints[12], keypoints[13])
+                knee_hyperext_detected = True
+
+            if knee_hyperext_detected:
+                print(f"膝关节角度（超伸检测）：{knee_ext_angle:.1f}°")
+                knee_ext_result = f"膝关节角度（超伸检测）：{knee_ext_angle:.1f}°"
+                knee_ext_advice = ''
+                knee_ext_assessment = ''
+                if 175 <= knee_ext_angle <= 185:
+                    knee_ext_assessment = "评估: 无膝超伸"
+                    knee_ext_advice = ""
+                elif 185 < knee_ext_angle <= 195:
+                    knee_ext_assessment = "评估: 轻微膝超伸"
+                    knee_ext_advice = "建议: 在站立和行走时，应避免膝关节过度伸直，有意识地保持膝盖微微弯曲的状态。穿着有良好支撑和缓冲性能的鞋子，可以有效减少膝关节在行走或运动时受到的冲击力。加强膝关节周围的肌肉力量，特别是股四头肌、腘绳肌和小腿肌肉的锻炼。"
+                elif 195 < knee_ext_angle <= 210:
+                    knee_ext_assessment = "评估: 严重膝超伸"
+                    knee_ext_advice = "建议: 在日常生活中要更加严格地注意姿势管理，避免长时间站立或行走。如果体重超标，应努力减轻体重，以减少膝关节所承受的压力。在专业康复治疗师的指导下进行康复训练。在医生的建议下，可能需要长期使用辅助器具来保持膝关节的正确位置。"
+                elif knee_ext_angle > 210:
+                    knee_ext_assessment = "评估: 膝超伸非常严重"
+                    knee_ext_advice = "建议: 避免任何可能对膝关节造成冲击和损伤的活动，生活方式进行调整，如减少长时间站立或行走的工作，选择更适合自己的活动方式。及时进行全面的医学评估，可能需要进行详细的影像学检查，在专业康复机构进行全面系统的康复训练。"
+                
+                # print(knee_ext_assessment)
+                # print(knee_ext_advice)
+                
+                # 将结果添加到诊断结果中
+                self.pose_dic[result_index] = f"{knee_ext_result} - {knee_ext_assessment} - {knee_ext_advice}"
+                result_index += 1
+                if knee_ext_advice:
+                    self.pose_dic[result_index] = knee_ext_advice
+                    result_index += 1
+        else:
+            print("检测到正面视角，进行高低肩、膝外翻/内翻、高低髋和头位不正检测")
+            
+            # 高低肩
+            if all(k in keypoints for k in [2, 3, 5, 6]):
+                shoulder_angle_diff = self.calculate_shoulder_angle(
+                    keypoints[3], keypoints[2], keypoints[5], keypoints[6]
+                )
+                
+                print(f"高低肩角度值： {shoulder_angle_diff:.1f}°")
+                shoulder_result = f"高低肩角度值： {shoulder_angle_diff:.1f}°"
+                
+                if shoulder_angle_diff <= 10:
+                    shoulder_assessment = "评估: 基本无高低肩"
+                    shoulder_advice = ""
+                elif 10 < shoulder_angle_diff <= 30:
+                    shoulder_assessment = "评估: 轻微高低肩"
+                    shoulder_advice = "建议: 在日常生活和工作中，要时刻提醒自己保持正确姿势。无论是站立还是坐着，都要注意双肩的平衡，避免长时间偏重一侧。进行一些简单的肩部拉伸和肌肉强化练习。"
+                elif 30 < shoulder_angle_diff <= 60:
+                    shoulder_assessment = "评估: 严重高低肩"
+                    shoulder_advice = "建议: 在日常生活中，要更加注重姿势的矫正。可以使用一些辅助工具来提醒自己保持正确的姿势。要尽量减少肩部的负重，避免携带过重的物品。建议在专业人士的指导下，进行更有针对性的康复训练。"
+                else:
+                    shoulder_assessment = "评估: 高低肩非常严重"
+                    shoulder_advice = "建议: 在日常生活中，要时刻保持高度的姿势意识，严格要求自己保持正确的身体姿态。尽量避免携带任何不必要的物品，以减轻身体的负担。需要及时进行详细的医学评估，以便制定更合适的治疗方案、进行全面系统的康复训练。"
+                
+                print(shoulder_assessment)
+                print(shoulder_advice)
+                
+                # 将结果添加到诊断结果中
+                self.pose_dic[result_index] = f"{shoulder_result} - {shoulder_assessment}"
+                result_index += 1
+                if shoulder_advice:
+                    self.pose_dic[result_index] = shoulder_advice
+                    result_index += 1
+
+            # 膝外翻（O形腿）/膝内翻（X形腿）
+            if all(k in keypoints for k in [9, 12, 10, 13]):
+                knee_distance1 = distance(keypoints[9], keypoints[12])
+                knee_distance2 = distance(keypoints[10], keypoints[13])
+                
+                if abs(knee_distance1) > abs(knee_distance2):
+                    leg_condition = "O型腿"
+                    # leg_type = "膝外翻"
+                else:
+                    leg_condition = "X型腿"
+                    # leg_type = "膝内翻"
+
+                print(f"腿型：{leg_condition}")
+                # 添加到诊断结果
+                leg_result = f"腿型：{leg_condition}）"
+                self.pose_dic[result_index] = leg_result
+                result_index += 1
+                
+                # 
+                # knee_angle = None
+                # if all(k in keypoints for k in [8, 9, 10]):
+                #     knee_angle = compute_angle(keypoints[8], keypoints[9], keypoints[10])
+                # elif all(k in keypoints for k in [11, 12, 13]):
+                #     knee_angle = compute_angle(keypoints[11], keypoints[12], keypoints[13])
+                
+                # 
+                # if knee_angle is not None:
+                #     knee_result = f"{leg_condition}（{leg_type}），膝关节角度值：{knee_angle:.1f}°"
+                #     self.pose_dic[result_index] = knee_result
+                #     result_index += 1
+
+            # 高低髋
+            if all(k in keypoints for k in [9, 8, 11, 12]):
+                hip_angle_diff = self.calculate_shoulder_angle(
+                    keypoints[9], keypoints[8], keypoints[11], keypoints[12]
+                )
+                
+                print(f"高低髋角度值：{hip_angle_diff:.1f}°")
+                hip_result = f"高低髋角度值：{hip_angle_diff:.1f}°"
+                
+                if hip_angle_diff <= 10:
+                    hip_assessment = "评估: 基本无高低髋"
+                    hip_advice = ""
+                elif 10 < hip_angle_diff <= 30:
+                    hip_assessment = "评估: 轻微高低髋"
+                    hip_advice = "建议: 在站立和行走时，要注意保持身体的平衡和对称。避免长期单侧负重。可以考虑在鞋内垫上合适的鞋垫，调整双脚的高度差。可以进行一些简单的髋部拉伸和肌肉强化练习。"
+                elif 30 < hip_angle_diff <= 60:
+                    hip_assessment = "评估: 严重高低髋"
+                    hip_advice = "建议: 在日常生活中，要更加严格地注意姿势的调整；避免长时间站立或行走，减少对髋部和下肢的负重压力。可以在专业康复治疗师的指导下，进行更具针对性的康复训练。在一些情况下，可能需要定制专门的矫形器具来帮助改善高低髋。"
+                else:
+                    hip_assessment = "评估: 高低髋非常严重"
+                    hip_advice = "建议: 在日常生活中，要时刻保持高度的姿势意识，严格要求自己保持正确的身体姿态。在医生或康复治疗师的建议下，可能需要长期使用拐杖或其他辅助器具来行走。需要及时进行详细的医学评估，以便制定更合适的治疗方案、进行全面系统的康复训练。"
+                
+                print(hip_assessment)
+                print(hip_advice)
+                
+                # 将结果添加到诊断结果中
+                self.pose_dic[result_index] = f"{hip_result} - {hip_assessment}"
+                result_index += 1
+                if hip_advice:
+                    self.pose_dic[result_index] = hip_advice
+                    result_index += 1
+
+            # 头位不正
+            if all(k in keypoints for k in [5, 1, 0]):
+                head_pos_angle = compute_angle(keypoints[5], keypoints[1], keypoints[0])
+                head_pos_diff = abs(head_pos_angle - 90)
+                
+                print(f"头位不正角度值：{head_pos_diff:.1f}°")
+                head_pos_result = f"头位不正角度值：{head_pos_diff:.1f}°"
+                
+                if head_pos_diff <= 10:
+                    head_pos_assessment = "评估: 无头位不正"
+                    head_pos_advice = ""
+                elif 10 < head_pos_diff <= 30:
+                    head_pos_assessment = "评估: 轻微头位不正"
+                    head_pos_advice = "建议: 日常生活中，要时刻注意保持正确的姿势，要确保头部保持中立位，避免长时间偏向一侧。选择合适的枕头，以保持颈部和头部的自然曲线。尽量保持仰卧或侧卧的睡眠姿势。进行一些简单的颈部肌肉锻炼，如颈部伸展运动。"
+                elif 30 < head_pos_diff <= 60:
+                    head_pos_assessment = "评估: 严重头位不正"
+                    head_pos_advice = "建议: 在日常生活中要更加严格地注意姿势管理。避免长时间保持同一姿势。避免颈部承受过重的负担，同时，要注意保持温暖，避免颈部受寒。建议在专业康复治疗师的指导下进行康复训练。"
+                else:
+                    head_pos_assessment = "评估: 头位不正非常严重"
+                    head_pos_advice = "建议: 在日常生活中，要时刻保持高度的姿势保护意识。尽量避免任何可能加重头位不正的活动。需要及时进行详细的医学评估，以便制定更合适的治疗方案、进行全面系统的康复训练。在医生的建议下，可能需要长期使用辅助器具来保持头部的正确位置。"
+                
+                print(head_pos_assessment)
+                print(head_pos_advice)
+                
+                # 将结果添加到诊断结果中
+                self.pose_dic[result_index] = f"{head_pos_result} - {head_pos_assessment}"
+                result_index += 1
+                if head_pos_advice:
+                    self.pose_dic[result_index] = head_pos_advice
+                    result_index += 1
+
+        self.log+="\n"
+        
         print(self.pose_dic)
 
         self.Loadresult()
@@ -391,6 +620,70 @@ class Ui_MainWindow(QWidget):
         self.sinOut2.emit("end")###处理结束后向信号队列sinOut2发送end信号
         self.sinOut.emit(str(durationT))##向信号队列sinOut发送时间信号
         self.sinOut3.emit(pc)
+
+    def calculate_shoulder_angle(self, right_elbow, right_shoulder, left_shoulder, left_elbow):
+        angle1 = compute_angle(right_elbow, right_shoulder, left_shoulder)
+        angle2 = compute_angle(right_shoulder, left_shoulder, left_elbow)
+        
+        # 返回角度差值的绝对值
+        angle_diff = abs(angle1 - angle2)
+        return angle_diff
+
+    def draw_keypoints(self, image_path, keypoints):
+        # 读取原始图像
+        image = self.cv_imread()
+        
+        # 绘制关键点和序号
+        for point_idx, coords in keypoints.items():
+            x, y = coords
+            # 绘制点（红色圆圈）
+            cv2.circle(image, (int(x), int(y)), 3, (0, 0, 255), -1)
+            # 标注序号（白色文字）
+            cv2.putText(image, str(point_idx), (int(x) + 10, int(y)), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
+        
+        # 保存图像
+        cv2.imwrite("keypoints_labeled.png", image)
+        print("关键点标注图已保存为: keypoints_labeled.png")
+
+    def detect_view_perspective(self, keypoints):
+        # 如果能看到双肩和双髋，则很可能是正面视角
+        has_both_shoulders = all(k in keypoints for k in [2, 5])  # 右肩和左肩
+        has_both_hips = all(k in keypoints for k in [8, 11])  # 右髋和左髋
+        
+        if has_both_shoulders and has_both_hips:
+            # 计算双肩距离和双髋距离
+            shoulder_distance = distance(keypoints[2], keypoints[5])
+            hip_distance = distance(keypoints[8], keypoints[11])
+            
+            # 如果双肩距离和双髋距离很小，很可能是侧面视角（肩膀和髋部重叠）
+            # 设定一个阈值，例如肩宽的20%
+            shoulder_width_threshold = 50  # 可以根据实际情况调整
+            
+            if shoulder_distance < shoulder_width_threshold or hip_distance < shoulder_width_threshold:
+                return 'side'
+            else:
+                return 'front'
+        
+        # 如果左右眼都能看到，则很可能是正面视角
+        has_both_eyes = all(k in keypoints for k in [14, 16])  # 右眼和左眼
+        if has_both_eyes:
+            return 'front'
+        
+        # 如果只能看到一侧的肩膀或髋部，很可能是侧面视角
+        right_side_only = (2 in keypoints and 5 not in keypoints) or (8 in keypoints and 11 not in keypoints)
+        left_side_only = (5 in keypoints and 2 not in keypoints) or (11 in keypoints and 8 not in keypoints)
+        
+        if right_side_only or left_side_only:
+            return 'side'
+        
+        # 如果只能看到一只眼睛，则可能是侧面视角
+        if (14 in keypoints and 16 not in keypoints) or (16 in keypoints and 14 not in keypoints):
+            return 'side'
+        
+        # 默认情况下，假设是正面视角
+        return 'front'
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
@@ -398,3 +691,25 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+
+"""
+
+鼻子 (0)
+颈部 (1)
+右肩 (2)
+右肘 (3)
+右腕 (4)
+左肩 (5)
+左肘 (6)
+左腕 (7)
+右髋 (8)
+右膝 (9)
+右踝 (10)
+左髋 (11)
+左膝 (12)
+左踝 (13)
+右眼 (14)
+左眼 (15)
+右耳 (16)
+左耳 (17)
+"""
