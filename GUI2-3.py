@@ -21,7 +21,7 @@ from threading import Thread
 import multiprocessing
 import warnings
 from ProcessImage import Processer
-from Classifier import Taichi_classifier
+# from Classifier import Taichi_classifier
 from cal_model import compute_angle,distance,compute_knee_angle,compute_full_angle,compute_vertical_angle
 
 
@@ -270,7 +270,7 @@ class Ui_MainWindow(QWidget):
         ##图片处理器
         self.processor = Processer()
         ##分类器
-        self.csf = Taichi_classifier()
+        # self.csf = Taichi_classifier()
         self.log = "Personal Vectors\n"## 终端信息
         self.Vec_data = []## 图片中的姿态向量
         self.pose_dic = {}
@@ -278,15 +278,15 @@ class Ui_MainWindow(QWidget):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "医学姿态识别系统"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "人体姿态健康评估"))
         self.pushButton_3.setText(_translate("MainWindow", "上传文件"))
         self.pushButton_4.setText(_translate("MainWindow", "姿态识别"))
         self.label_3.setText(_translate("MainWindow", "Input Image"))
         self.label_11.setText(_translate("MainWindow", "OutPut Image"))
         self.label_12.setText(_translate("MainWindow", "Pose Image"))
-        self.label_10.setText(_translate("MainWindow", "医学姿态识别系统"))
+        self.label_10.setText(_translate("MainWindow", "人体姿态健康评估"))
         self.label_18.setText(_translate("MainWindow", "终端输出"))
-        self.label_19.setText(_translate("MainWindow", "诊断结果"))
+        self.label_19.setText(_translate("MainWindow", "评估结果"))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
         self.listWidget.setSortingEnabled(__sortingEnabled)
