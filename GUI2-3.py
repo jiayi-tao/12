@@ -32,7 +32,7 @@ class Ui_MainWindow(QWidget):
     sinOut = pyqtSignal(str)
     sinOut2 = pyqtSignal(str)
     sinOut3 =  pyqtSignal(int)
-    sinOut4 = pyqtSignal(str) ## 终端输出
+   # sinOut4 = pyqtSignal(str) ## 终端输出
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("姿态诊断系统")
         MainWindow.resize(1582, 903)
@@ -40,7 +40,7 @@ class Ui_MainWindow(QWidget):
         self.sinOut.connect(self.GetProcessTime)
         self.sinOut2.connect(self.ProcessingWindow)
         self.sinOut3.connect(self.Display_PersonCount)
-        self.sinOut4.connect(self.Terminal_Out)
+        # self.sinOut4.connect(self.Terminal_Out)
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -193,13 +193,39 @@ class Ui_MainWindow(QWidget):
         self.groupBox_2.setGeometry(QtCore.QRect(160, 640, 871, 161))
         self.groupBox_2.setTitle("")
         self.groupBox_2.setObjectName("groupBox_2")
-        self.textEdit = QtWidgets.QTextEdit(self.groupBox_2)
-        self.textEdit.setGeometry(QtCore.QRect(50, 35, 781, 111))
-        # self.textEdit.setDisabled(True)
-        self.textEdit.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-"color: rgb(13, 177, 27);\n"
-"font-size: 13px;")
-        self.textEdit.setObjectName("textEdit")
+#         self.textEdit = QtWidgets.QTextEdit(self.groupBox_2)
+#         self.textEdit.setGeometry(QtCore.QRect(50, 35, 781, 111))
+#         # self.textEdit.setDisabled(True)
+#         self.textEdit.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+#          "color: rgb(13, 177, 27);\n"
+#           "font-size: 13px;")
+#         self.textEdit.setObjectName("textEdit")
+        # 创建 QFont 对象
+        # font = QtGui.QFont()
+        # font.setFamily("华文行楷")
+        # font.setPointSize(10)
+        # font.setBold(False)
+        # font.setItalic(False)
+        # font.setWeight(50)
+        #
+        # # 创建 QLabel 组件
+        # self.label_text = QtWidgets.QLabel(self.groupBox_2)
+        # self.label_text.setGeometry(QtCore.QRect(50, 35, 781, 111))
+        # self.label_text.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+        #                               "color: rgb(0, 0, 0);\n""font-size: 15px;")
+        # # 将设置好的字体应用到 QLabel 上
+        # self.label_text.setFont(font)
+        # self.label_text.setText("请自然站立双臂自然下垂，目视前方，保持放松状态拍摄全身照片。")
+        # self.label_text.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.label_text = QtWidgets.QLabel(self.groupBox_2)
+        self.label_text.setGeometry(QtCore.QRect(50, 35, 781, 111))
+        self.label_text.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+                                      "color: rgb(0, 0, 0);\n"
+                                      "font-size: 25px;")
+        self.label_text.setText("请自然站立双臂自然下垂，目视前方，保持放松状态拍摄全身照片。")
+        self.label_text.setAlignment(QtCore.Qt.AlignCenter)
+
         self.label_18 = QtWidgets.QLabel(self.groupBox)
         self.label_18.setGeometry(QtCore.QRect(520, 610, 131, 61))
         font = QtGui.QFont()
@@ -210,7 +236,7 @@ class Ui_MainWindow(QWidget):
         font.setWeight(75)
         self.label_18.setFont(font)
         self.label_18.setStyleSheet("color:white;\n"
-"font: 20pt \"华文楷体\";\n"
+"font: 15pt \"华文楷体\";\n"
 "font-weight:bold;")
         self.label_18.setAlignment(QtCore.Qt.AlignCenter)
         self.label_18.setObjectName("label_18")
@@ -228,7 +254,7 @@ class Ui_MainWindow(QWidget):
         font.setWeight(75)
         self.label_19.setFont(font)
         self.label_19.setStyleSheet("color:white;\n"
-"font: 20pt \"华文楷体\";\n"
+"font: 18pt \"华文楷体\";\n"
 "font-weight:bold;")
         self.label_19.setAlignment(QtCore.Qt.AlignCenter)
         self.label_19.setObjectName("label_19")
@@ -285,7 +311,7 @@ class Ui_MainWindow(QWidget):
         self.label_11.setText(_translate("MainWindow", "OutPut Image"))
         self.label_12.setText(_translate("MainWindow", "Pose Image"))
         self.label_10.setText(_translate("MainWindow", "人体姿态健康评估"))
-        self.label_18.setText(_translate("MainWindow", "终端输出"))
+        self.label_18.setText(_translate("MainWindow", "温馨提示"))
         self.label_19.setText(_translate("MainWindow", "评估结果"))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
@@ -299,7 +325,15 @@ class Ui_MainWindow(QWidget):
             pass
         else:
             self.uploadimg=imgName
-            jpg = QtGui.QPixmap(imgName).scaled(self.label_13.width(), self.label_13.height())
+            # jpg = QtGui.QPixmap(imgName).scaled(self.label_13.width(), self.label_13.height())
+            # 使用scaled方法保持长宽比并自适应大小
+            jpg = QtGui.QPixmap(imgName).scaled(
+                self.label_13.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation
+            )  ##保持长宽比，平滑转换
+
+            self.label_13.setPixmap(jpg)  # 显示图片
+            self.label_13.setAlignment(Qt.AlignCenter)  ##居中显示
+
             self.label_13.setPixmap(jpg)
             img = self.cv_imread()
             if img.shape[0]>1000 or img.shape[1]>1000:
@@ -307,6 +341,8 @@ class Ui_MainWindow(QWidget):
                 self.ImageSizeError()
             else:
                 self.pushButton_4.setDisabled(False)
+
+
     def ImageSizeError(self):##图片过大弹窗
         QMessageBox.critical(self,"错误","图片过大，请重新上传",QMessageBox.Yes|QMessageBox.No,QMessageBox.Yes)
     def ImageEmptyError(self):##图片为空警告
@@ -327,9 +363,9 @@ class Ui_MainWindow(QWidget):
         # 注释掉这行或删除它
         # self.lcdNumber_2.display(pc)
         pass  # 添加pass以避免空函数
-    def Terminal_Out(self):
-        self.textEdit.setText(self.log)
-        self.log = "Personal Vectors\n"##每次执行完还需要初始化终端信息
+    # def Terminal_Out(self):
+    #     self.textEdit.setText(self.log)
+    #     self.log = "Personal Vectors\n"##每次执行完还需要初始化终端信息
     def Loadresult(self):
         self.listWidget.clear()
         _translate = QtCore.QCoreApplication.translate
@@ -475,7 +511,7 @@ class Ui_MainWindow(QWidget):
                     self.pose_dic[result_index] = knee_ext_advice
                     result_index += 1
         else:
-            print("检测到正面视角，进行高低肩、膝外翻/内翻、高低髋和头位不正检测")
+            print("检测到正面视角，进行高低肩、膝外翻/内翻、高低髋和头部侧倾检测")
             
             # 高低肩
             if all(k in keypoints for k in [2, 3, 5, 6]):
@@ -490,13 +526,13 @@ class Ui_MainWindow(QWidget):
                     shoulder_assessment = "评估: 基本无高低肩"
                     shoulder_advice = ""
                 elif 10 < shoulder_angle_diff <= 30:
-                    shoulder_assessment = "评估: 轻微高低肩"
+                    shoulder_assessment = "评估: 轻微高低肩，正常范围为小于10度"
                     shoulder_advice = "建议: 在日常生活和工作中，要时刻提醒自己保持正确姿势。无论是站立还是坐着，都要注意双肩的平衡，避免长时间偏重一侧。进行一些简单的肩部拉伸和肌肉强化练习。"
                 elif 30 < shoulder_angle_diff <= 60:
-                    shoulder_assessment = "评估: 严重高低肩"
+                    shoulder_assessment = "评估: 严重高低肩，正常范围为小于10度"
                     shoulder_advice = "建议: 在日常生活中，要更加注重姿势的矫正。可以使用一些辅助工具来提醒自己保持正确的姿势。要尽量减少肩部的负重，避免携带过重的物品。建议在专业人士的指导下，进行更有针对性的康复训练。"
                 else:
-                    shoulder_assessment = "评估: 高低肩非常严重"
+                    shoulder_assessment = "评估: 高低肩非常严重，正常范围为小于10度"
                     shoulder_advice = "建议: 在日常生活中，要时刻保持高度的姿势意识，严格要求自己保持正确的身体姿态。尽量避免携带任何不必要的物品，以减轻身体的负担。需要及时进行详细的医学评估，以便制定更合适的治疗方案、进行全面系统的康复训练。"
                 
                 print(shoulder_assessment)
@@ -572,26 +608,26 @@ class Ui_MainWindow(QWidget):
                     self.pose_dic[result_index] = hip_advice
                     result_index += 1
 
-            # 头位不正
+            # 头部侧倾
             if all(k in keypoints for k in [5, 1, 0]):
                 head_pos_angle = compute_angle(keypoints[5], keypoints[1], keypoints[0])
                 head_pos_diff = abs(head_pos_angle - 90)
                 
-                print(f"头位不正角度值：{head_pos_diff:.1f}°")
-                head_pos_result = f"头位不正角度值：{head_pos_diff:.1f}°"
+                print(f"头部侧倾角度值：{head_pos_diff:.1f}°")
+                head_pos_result = f"头部侧倾角度值：{head_pos_diff:.1f}°"
                 
                 if head_pos_diff <= 10:
-                    head_pos_assessment = "评估: 无头位不正"
+                    head_pos_assessment = "评估: 无头部侧倾"
                     head_pos_advice = ""
                 elif 10 < head_pos_diff <= 30:
-                    head_pos_assessment = "评估: 轻微头位不正"
+                    head_pos_assessment = "评估: 轻微头部侧倾，正常角度为10度"
                     head_pos_advice = "建议: 日常生活中，要时刻注意保持正确的姿势，要确保头部保持中立位，避免长时间偏向一侧。选择合适的枕头，以保持颈部和头部的自然曲线。尽量保持仰卧或侧卧的睡眠姿势。进行一些简单的颈部肌肉锻炼，如颈部伸展运动。"
                 elif 30 < head_pos_diff <= 60:
-                    head_pos_assessment = "评估: 严重头位不正"
+                    head_pos_assessment = "评估: 严重头部侧倾，正常角度为10度"
                     head_pos_advice = "建议: 在日常生活中要更加严格地注意姿势管理。避免长时间保持同一姿势。避免颈部承受过重的负担，同时，要注意保持温暖，避免颈部受寒。建议在专业康复治疗师的指导下进行康复训练。"
                 else:
-                    head_pos_assessment = "评估: 头位不正非常严重"
-                    head_pos_advice = "建议: 在日常生活中，要时刻保持高度的姿势保护意识。尽量避免任何可能加重头位不正的活动。需要及时进行详细的医学评估，以便制定更合适的治疗方案、进行全面系统的康复训练。在医生的建议下，可能需要长期使用辅助器具来保持头部的正确位置。"
+                    head_pos_assessment = "评估: 角度大于60度，头部侧倾非常严重，正常角度为10度"
+                    head_pos_advice = "建议: 在日常生活中，要时刻保持高度的姿势保护意识。尽量避免任何可能加重头部侧倾的活动。需要及时进行详细的医学评估，以便制定更合适的治疗方案、进行全面系统的康复训练。在医生的建议下，可能需要长期使用辅助器具来保持头部的正确位置。"
                 
                 print(head_pos_assessment)
                 print(head_pos_advice)
@@ -609,10 +645,28 @@ class Ui_MainWindow(QWidget):
 
         self.Loadresult()
 
-        self.sinOut4.emit("start")
-        jpg = QtGui.QPixmap("result.png").scaled(self.label_13.width(), self.label_13.height())
+        self.sinOut2.emit("start")
+        # jpg = QtGui.QPixmap("result.png").scaled(self.label_13.width(), self.label_13.height())
+        # jpg_result = QtGui.QPixmap("result.png").scaled(
+        #     self.label_14.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation
+        # )
+        # self.label_14.setPixmap(jpg_result)
+        # self.label_14.setAlignment(Qt.AlignCenter)
+        jpg = QtGui.QPixmap("result.png").scaled(self.label_14.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.label_14.setPixmap(jpg)
-        jpg = QtGui.QPixmap("only_Pose.png").scaled(self.label_13.width(), self.label_13.height())
+        self.label_14.setAlignment(Qt.AlignCenter)
+
+
+        self.label_14.setPixmap(jpg)
+        # jpg = QtGui.QPixmap("only_Pose.png").scaled(self.label_13.width(), self.label_13.height())
+        # jpg_pose = QtGui.QPixmap("only_Pose.png").scaled(self.label_15.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        # self.label_15.setPixmap(jpg_pose)
+        # self.label_15.setAlignment(Qt.AlignCenter)
+        jpg = QtGui.QPixmap("only_Pose.png").scaled(self.label_15.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.label_15.setPixmap(jpg)
+        self.label_15.setAlignment(Qt.AlignCenter)
+
+
         self.label_15.setPixmap(jpg)
         toc=time.time()
         self.pushButton_4.setDisabled(False)

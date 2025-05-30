@@ -35,6 +35,8 @@ class Processer:
         oriImg = self.cv_imread(self.input_image)  # B,G,R order
         multiplier = 0.8*self.model_params['boxsize']/oriImg.shape[0]
 
+
+
         scale = multiplier
         print(scale)
         ##图片x 缩放到294
